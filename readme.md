@@ -11,6 +11,7 @@
      * des signes chinois apparaissent et ne sont pas lisible par la base de donné
      * utf8md3 ne fonctionne pas
      * je n'arrive pas a crée un user pour la database
+     * lorsque la fonction de filtre fonctione, elle n'efface pas toute la ligne mais insert la valeur de la ligne precedente
 
   ---> a faire:
      * choisir les données necessaire

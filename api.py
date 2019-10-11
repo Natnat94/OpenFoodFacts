@@ -41,13 +41,22 @@ class ApiRetriever:
         for i in range(20):
             sdata = self.data["products"][i]
             for key in cles:
-                if sdata[key] != "":
+                if sdata[key] != "": # and self.isEnglish(sdata[key]) == True:
                     #nstring= key.center(20,'*')
                     #print("voici le nom :", nstring)
                     self.data2[key] = sdata[key]
                 else:
                     pass
             self.data_save.append(self.data2.copy())
+
+    def isEnglish(self, s):
+        print(s)
+        try:
+            s.encode(encoding='utf-8').decode('ascii')
+        except UnicodeDecodeError:
+            return False
+        else:
+            return True
 
 
 class DatabaseHandler:
