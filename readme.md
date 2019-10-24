@@ -17,3 +17,15 @@
      * choisir les données necessaire
      * crée une fonction qui classe dans quelle table enregistrer les infos
      * definir la structure de la base de données
+
+23/10/2019
+
+  - la base de donné se créé toute seule
+  - ajout des fonctions d'ajout de donnée au table: 'product', 'store', 'storeproduct'
+  - une fonction detecte l'id du magasin correspondant au produit
+
+
+  ---> a faire:
+    * gerer mes erreures lors de l'insertion de donné afin d'annuler toute la ligne si il y a eu un pb
+    * cree une fonction qui detecte les espaces dans les noms des magasin et qui les retire avant de les mettre dans la DB
+    * cree une fonction pour attribué la bonne categorie au produit
