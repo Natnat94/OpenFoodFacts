@@ -29,3 +29,6 @@
     * gerer mes erreures lors de l'insertion de donné afin d'annuler toute la ligne si il y a eu un pb
     * cree une fonction qui detecte les espaces dans les noms des magasin et qui les retire avant de les mettre dans la DB
     * cree une fonction pour attribué la bonne categorie au produit
+
+  ---> probleme:
+    * une erreur "KeyError:" apparait de temps en temps lors du chargement des donnée de l'api

@@ -1,4 +1,4 @@
-from api import ApiRetriever, DatabaseHandler, DatabaseBuilder
+from api import ApiRetriever, Product, Store, StoreProduct, DatabaseBuilder, DataCleaner
 
 
 #for i in range(5):
@@ -12,28 +12,25 @@ from api import ApiRetriever, DatabaseHandler, DatabaseBuilder
 #        pprint(tdata[key])
 
 def main():
-    apiret = ApiRetriever()
-    datab = DatabaseHandler()
+    api = ApiRetriever()
+    data = api.get_data()
     dbbuilder = DatabaseBuilder()
-    dbbuilder.store()
-    dbbuilder.category()
-    dbbuilder.product()
-    dbbuilder.storeproduct()
-    dbbuilder.productsaved()
-    datab.initdata()
-    apiret.url_builder()
-    #apiret.content_viewer()
-    apiret.ccleaner()
-    #datab.inserintodb2(apiret.storefilter(apiret.data_save))
-    #datab.inserintodb3('franprix')
-    for i in range(50):
-        datab.inserintodb2(apiret.storefilter(apiret.data_save[i]))
-        datab.inserintodb(apiret.data_save[i]['id'], apiret.data_save[i]['product_name_fr'], apiret.data_save[i]['url'], apiret.data_save[i]['nutrition_grade_fr'])
-        for c in apiret.storefilter(apiret.data_save[i]):
-            store = datab.inserintodb3(c)
-            datab.inserintodb4(apiret.data_save[i]['id'], store)
-    #datab.viewdb()
-
+    store= Store()
+    product= Product()
+    storeproduct= StoreProduct()
+    dbbuilder.create_tables()
+    cleaner= DataCleaner()
+    cleaner.realcleaner(data)
+    state = True
+    category = api.research['tag_0']
+    if state:
+        for i in cleaner.data_save:
+            store.insert_store(i)
+            product.insert_product(i['id'], i['product_name_fr'], i['url'], i['nutrition_grade_fr'], category)
+            for c in store.store_list:
+                storeproduct.insert_storeproduct(i['id'], c)
+        print(product.erreur_count)
+        print(store.erreur_count)
 
 if __name__ == "__main__":
     main()
