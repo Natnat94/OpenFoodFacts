@@ -5,6 +5,7 @@
 import requests
 import records
 import html
+import os
 from sqlalchemy.exc import IntegrityError
 import sqlscript as table
 from pprint import pprint
@@ -260,7 +261,7 @@ class Information(DatabaseHandler):
         """this method retreive the info about the selected product"""
         req_product = self.db.query(
                 'SELECT product.productid, category.category, productname, \
-                    link, nutriscore, store.store \
+                    nutriscore, store.store, link \
                 FROM product, category, store, storeproduct \
                 WHERE ( product.category = category.id \
                         and product.productid = storeproduct.productid \
@@ -277,5 +278,45 @@ class Information(DatabaseHandler):
                 else:
                     store.append(value)
         store = list(dict.fromkeys(store))
+        store = " & ".join(store)
         produit['store'] = store
-        pprint(produit)
+        return produit
+
+class UserUx:
+
+    def __init__(self):
+        self.width = os.get_terminal_size().columns
+        if self.width % 2 != 0:
+            self.width = self.width - 1
+        self.mwidth = int(self.width/2)
+
+    def show_product(self, data):
+        
+        keys = ['productname','category','store', 'nutriscore', 'productid', 'link']
+        for key in keys:
+            self.ligne()
+            if key == 'link':
+                self.one_cell(data[key])
+                self.ligne()
+            else:
+                self.two_cell(key, data[key])
+
+    def ligne(self):
+
+        print('{0:*^{1}}'.format('*', self.width),end ='\n')
+
+    def two_cell(self, titre1, titre2):
+        width = self.mwidth - 3
+        width2 = self.mwidth - 2
+        print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
+        print('* {0:^{2}}* {1:^{3}}*'.format(titre1, titre2, width, width2), end ='\n')
+        print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
+
+    def one_cell(self,link):
+        width = self.width - 3
+        print('* {0:^{1}}*'.format('', width), end ='\n')
+        if not isinstance(link, str):
+            print("ouaaaaaiiii")
+        else:
+            print('* {0:^{1}}*'.format(link, width), end ='\n')
+        print('* {0:^{1}}*'.format('', width), end ='\n')
