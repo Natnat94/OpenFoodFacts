@@ -1,5 +1,5 @@
 from api import ApiRetriever, Product, Store, StoreProduct, \
-    DatabaseBuilder, DataCleaner
+    DatabaseBuilder, DataCleaner, Information
 
 
 def main():
@@ -7,6 +7,7 @@ def main():
     cleaner = DataCleaner()
     dbbuilder = DatabaseBuilder()
     stores = Store()
+    information = Information()
     products = Product()
     storeproduct = StoreProduct()
     raw_data = api.get_data()
@@ -22,6 +23,7 @@ def main():
                 storeproduct.insert_storeproduct(prdt, store)
         # print(products.erreur_count)
         # print(stores.erreur_count)
+    information.info()
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ import records
 import html
 from sqlalchemy.exc import IntegrityError
 import sqlscript as table
-
+from pprint import pprint
 
 class ApiRetriever:
     """this class purpose is to retrieve the information from
@@ -251,3 +251,31 @@ class DataCleaner:
             return False
         else:
             return True
+
+
+class Information(DatabaseHandler):
+    """docstring for information."""
+
+    def info(self):
+        """this method retreive the info about the selected product"""
+        req_product = self.db.query(
+                'SELECT product.productid, category.category, productname, \
+                    link, nutriscore, store.store \
+                FROM product, category, store, storeproduct \
+                WHERE ( product.category = category.id \
+                        and product.productid = storeproduct.productid \
+                        and storeproduct.store = store.id \
+                        and product.productid = :productid)',
+                        productid = 3019080042005)
+        req_products = req_product.as_dict()
+        produit = {}
+        store = []
+        for r in req_products:
+            for key, value in r.items():
+                if key != 'store':
+                    produit[key] = value
+                else:
+                    store.append(value)
+        store = list(dict.fromkeys(store))
+        produit['store'] = store
+        pprint(produit)
