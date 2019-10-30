@@ -288,8 +288,8 @@ class Information(DatabaseHandler):
         req_product = self.db.query(
                 'SELECT product.productname, product.productid \
                 from product, category where \
-                (category.category = :cat and product.nutriscore > :nutri)', \
-                cat = 'Conserves', nutri = 'b')
+                (category.category = :cat and product.nutriscore > :nutri) \
+                LIMIT 20', cat = 'Conserves', nutri = 'b')
         req_products = {}
         for r in req_product:
             req_products[r.productname] = r.productid
@@ -336,20 +336,18 @@ class UserUx:
         print('* {0:^{1}}*'.format('', width), end ='\n')
 
     def product_list(self, data):
-        width = self.mwidth - 20
         show_dict, temp_dict = {}, {}
         count = 1
         print("which product do you prefer ?")
-        if len(data) % 2 != 0:
-            data.popitem()
         for key in data.keys():
             temp_dict[count] = key
             show_dict[count] = str(count) + "- " + key
             count += 1
-        d2 = dict(list(show_dict.items())[len(show_dict)//2:])
-        d1 = dict(list(show_dict.items())[:len(show_dict)//2])
-        for v,v1 in zip(d1.values(), d2.values()):
-            print(' {1:{0}} {2:<{0}}'.format(width,v,v1), end ='\n')
+        for v in show_dict.values():
+            print(' {1:<{0}}'.format(self.mwidth,v), end ="")
+            if count % 2 == 0:
+                print("")
+            count += 1
         return temp_dict
 
     def select_product(self, data):
