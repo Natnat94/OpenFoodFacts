@@ -17,18 +17,18 @@ def main():
     w_into_db = int(input("write into the DB ? 1-yes 0-no "))
     w_into_file = int(input("write into the JSON file ? 1-yes 0-no "))
     r_into_db = int(input("read into the DB ? 1-yes 0-no "))
-
+    userux.welcome()
     # debut du programme
-    if use_api == 1:
+    if use_api == 1: # READY DO NOT TOUCH !!
         # utilisation de l'api et nettoyage des données
         print("utilisation de l'api")
         cleaner.realcleaner(raw_data)
 
-    if w_into_file == 1:
+    if w_into_file == 1: # READY DO NOT TOUCH !!
         # sauvegarde des données dans un fichier JSON
         with open('products.json','w') as f:
             json.dump(cleaner.data_save, f, indent=2)
-    category = api.research['tag_0']
+    category = api.research['tag_0'] # <<<----- to be updated !!!
 
     if w_into_db == 1:
         # creation des tables
@@ -43,7 +43,7 @@ def main():
         # print(products.erreur_count)
         # print(stores.erreur_count)
 
-    if r_into_db == 1:
+    if r_into_db == 1: # READY DO NOT TOUCH !!
         # selection d'un element de la base de données
         cat_list = information.get_category()
         category = userux.select_category(cat_list) # selection de la categorie désirée

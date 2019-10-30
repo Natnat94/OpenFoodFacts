@@ -54,15 +54,15 @@ class ApiRetriever:
 class DatabaseHandler:
     """this is a superclass for all DB related class"""
 
-    def __init__(self):
+    def __init__(self, user = "myuser", password = "password"):
         """this init method connect between the program
             and the MySQL database"""
-        DATABASE_URL = ("mysql+mysqlconnector://myuser:password@localhost/projet5?charset=utf8mb4")
+        DATABASE_URL = ("mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4".format(user, password))
         self.db = records.Database(DATABASE_URL)
         self.erreur_count = {'error': 0}
         self.count = 0
         self.store_list = None
-        self.products = None
+        self.products = None # READY DO NOT TOUCH !!
 
 
 class Product(DatabaseHandler):
@@ -94,7 +94,7 @@ class Product(DatabaseHandler):
         # retrouve l'id de la category rechercher sur la table 'category'
         truc = self.db.query('SELECT id FROM category WHERE category = :cat',
                              cat=data)
-        return truc[0].id
+        return truc[0].id # READY DO NOT TOUCH !!
 
 
 class Store(DatabaseHandler):
@@ -127,7 +127,7 @@ class Store(DatabaseHandler):
         store_list = store.split(",")
         for c in range(len(store_list)):
             store_list[c] = store_list[c].strip()
-        return store_list
+        return store_list # READY DO NOT TOUCH !!
 
 
 class StoreProduct(DatabaseHandler):
@@ -157,15 +157,15 @@ class StoreProduct(DatabaseHandler):
             given from the method argument"""
         # retrouve l'id du magasin rechercher sur la table 'store'
         truc = self.db.query('SELECT id FROM store WHERE Store = :stores', stores=data)
-        return truc[0].id
+        return truc[0].id # READY DO NOT TOUCH !!
 
 
 class DatabaseBuilder:
     """this class purpose is the create the database tables if they
         do not already exist"""
 
-    def __init__(self):
-        DATABASE_URL = ("mysql+mysqlconnector://myuser:password@localhost/projet5?charset=utf8mb4")
+    def __init__(self, user = "myuser", password = "password"):
+        DATABASE_URL = ("mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4".format(user, password))
         self.db = records.Database(DATABASE_URL)
 
     def create_tables(self):
@@ -185,7 +185,7 @@ class DatabaseBuilder:
                            {"data1": "Aliments pour bébé"},
                            {"data1": "Biscuits"},
                            {"data1": "Pizzas"},
-                           {"data1": "Conserves"})
+                           {"data1": "Conserves"}) # READY DO NOT TOUCH !!
 
 
 class DataCleaner:
@@ -252,7 +252,7 @@ class DataCleaner:
         except UnicodeDecodeError:
             return False
         else:
-            return True
+            return True # READY DO NOT TOUCH !!
 
 
 class Information(DatabaseHandler):
@@ -295,53 +295,58 @@ class Information(DatabaseHandler):
             req_products[r.productname] = r.productid
         return req_products # recherche les produits existants d'une categorie dans la BdD
 
-    def get_category(self):
+    def get_category(self): # recherche les categories existantes dans la BdD
         """this method retreive the category list of the database"""
         req_category = self.db.query('SELECT * from category')
         req_categories = {}
         for r in req_category:
             req_categories[r.category] = r.id
-        return req_categories # recherche les categories existantes dans la BdD
+        return req_categories
 
 
-class UserUx:
-    """docstring for UserUx."""
+class Drawer:
+    """This class purpose is to draw information in a beautifull manner into the terminal"""
     def __init__(self):
         self.width = os.get_terminal_size().columns
         if self.width % 2 != 0:
             self.width = self.width - 1
         self.mwidth = int(self.width/2)
 
-    def show_product(self, data):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        self.two_cell('Nom du produit', 'categorie du produit')
-        self.two_cell(data['productname'], data['category'])
-        self.one_cell(data['link'])
-        self.two_cell('Produit disponible dans les magasins', 'Score nutritif')
-        self.two_cell(data['store'], data['nutriscore'])
-        self.ligne() # affiche une fiche d'un produit dans le terminal
-
-    def ligne(self):
+    def line(self):
 
         print('{0:*^{1}}'.format('*', self.width),end ='\n') # dessine une ligne dans le terminal
 
     def two_cell(self, titre1, titre2):
         width = self.mwidth - 3
         width2 = self.mwidth - 2
-        self.ligne()
+        self.line()
         print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
         print('* {0:^{2}}* {1:^{3}}*'.format(titre1, titre2, width, width2), end ='\n')
         print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n') # dessine deux cellules d'info dans le terminal
 
-    def one_cell(self,link):
+    def one_cell(self,link): # dessine une cellule d'info dans le terminal
         width = self.width - 3
-        self.ligne()
+        self.line()
         print('* {0:^{1}}*'.format('', width), end ='\n')
         if not isinstance(link, str):
-            print("ouaaaaaiiii")
+            for row in link:
+                print('* {0:^{1}}*'.format(row, width), end ='\n')
         else:
             print('* {0:^{1}}*'.format(link, width), end ='\n')
-        print('* {0:^{1}}*'.format('', width), end ='\n') # dessine une cellule d'info dans le terminal
+        print('* {0:^{1}}*'.format('', width), end ='\n') # READY DO NOT TOUCH !!
+
+
+class UserUx(Drawer):
+    """docstring for UserUx."""
+
+    def show_product(Drawer, data):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        Drawer.two_cell('Nom du produit', 'categorie du produit')
+        Drawer.two_cell(data['productname'], data['category'])
+        Drawer.one_cell(data['link'])
+        Drawer.two_cell('Produit disponible dans les magasins', 'Score nutritif')
+        Drawer.two_cell(data['store'], data['nutriscore'])
+        Drawer.line() # affiche une fiche d'un produit dans le terminal
 
     def product_list(self, data):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -379,3 +384,9 @@ class UserUx:
         else:
             key = products[choice]
             return data[key] # selectionne une categorie dans le terminal
+
+    def welcome(Drawer):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        welcome =["","","","","","Bienvenue !!!","","","","",""]
+        Drawer.one_cell(welcome)
+        Drawer.line()
