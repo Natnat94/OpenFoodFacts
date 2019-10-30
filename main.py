@@ -12,23 +12,23 @@ def main():
     products = Product()
     storeproduct = StoreProduct()
     raw_data = api.get_data()
-    w_into_db = True
-    use_api = True
-    w_into_file = False
-    r_into_db = True
+    use_api = int(input("use the api ? 1-yes 0-no "))
+    w_into_db = int(input("write into the DB ? 1-yes 0-no "))
+    w_into_file = int(input("write into the JSON file ? 1-yes 0-no "))
+    r_into_db = int(input("read into the DB ? 1-yes 0-no "))
 
     # debut du programme
-    if use_api:
+    if use_api == 1:
         # utilisation de l'api et nettoyage des données
         cleaner.realcleaner(raw_data)
 
-    if w_into_file:
+    if w_into_file == 1:
         # sauvegarde des données dans un fichier JSON
         with open('products.json','w') as f:
             json.dump(cleaner.data_save, f, indent=2)
     category = api.research['tag_0']
 
-    if w_into_db:
+    if w_into_db == 1:
         # creation des tables
         dbbuilder.create_tables()
         # Boucle de remplissage de la base de données
@@ -40,7 +40,7 @@ def main():
         # print(products.erreur_count)
         # print(stores.erreur_count)
 
-    if r_into_db:
+    if r_into_db == 1:
         # selection d'un element de la base de données
         choice = userux.select_product(information.get_products())
         userux.show_product(information.get_info(choice))
