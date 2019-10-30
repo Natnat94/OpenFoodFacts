@@ -6,6 +6,7 @@ import requests
 import records
 import html
 import os
+import json
 from sqlalchemy.exc import IntegrityError
 import sqlscript as table
 from pprint import pprint
@@ -24,7 +25,7 @@ class ApiRetriever:
                          'json': '1',
                          'tagtype_0': 'categories',
                          'tag_contains_0': 'contains',
-                         'tag_0': 'Conserves',
+                         'tag_0': 'Biscuits',
                          'page_size': '250'}
 
     def get_data(self):
@@ -257,7 +258,7 @@ class DataCleaner:
 class Information(DatabaseHandler):
     """docstring for information."""
 
-    def info(self):
+    def get_info(self, data):
         """this method retreive the info about the selected product"""
         req_product = self.db.query(
                 'SELECT product.productid, category.category, productname, \
@@ -267,7 +268,7 @@ class Information(DatabaseHandler):
                         and product.productid = storeproduct.productid \
                         and storeproduct.store = store.id \
                         and product.productid = :productid)',
-                        productid = 3019080042005)
+                        productid = data)
         req_products = req_product.as_dict()
         produit = {}
         store = []
@@ -282,6 +283,19 @@ class Information(DatabaseHandler):
         produit['store'] = store
         return produit
 
+    def get_products(self):
+        """this method retreive the products list of a selected category"""
+        req_product = self.db.query(
+                'SELECT product.productname, product.productid \
+                from product, category where \
+                (category.category = :cat and product.nutriscore > :nutri)', \
+                cat = 'Conserves', nutri = 'b')
+        req_products = {}
+        for r in req_product:
+            req_products[r.productname] = r.productid
+        return req_products
+
+
 class UserUx:
 
     def __init__(self):
@@ -291,15 +305,13 @@ class UserUx:
         self.mwidth = int(self.width/2)
 
     def show_product(self, data):
-        
-        keys = ['productname','category','store', 'nutriscore', 'productid', 'link']
-        for key in keys:
-            self.ligne()
-            if key == 'link':
-                self.one_cell(data[key])
-                self.ligne()
-            else:
-                self.two_cell(key, data[key])
+        os.system('cls' if os.name == 'nt' else 'clear')
+        self.two_cell('Nom du produit', 'categorie du produit')
+        self.two_cell(data['productname'], data['category'])
+        self.one_cell(data['link'])
+        self.two_cell('Produit disponible dans les magasins', 'Score nutritif')
+        self.two_cell(data['store'], data['nutriscore'])
+        self.ligne()
 
     def ligne(self):
 
@@ -308,15 +320,44 @@ class UserUx:
     def two_cell(self, titre1, titre2):
         width = self.mwidth - 3
         width2 = self.mwidth - 2
+        self.ligne()
         print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
         print('* {0:^{2}}* {1:^{3}}*'.format(titre1, titre2, width, width2), end ='\n')
         print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
 
     def one_cell(self,link):
         width = self.width - 3
+        self.ligne()
         print('* {0:^{1}}*'.format('', width), end ='\n')
         if not isinstance(link, str):
             print("ouaaaaaiiii")
         else:
             print('* {0:^{1}}*'.format(link, width), end ='\n')
         print('* {0:^{1}}*'.format('', width), end ='\n')
+
+    def product_list(self, data):
+        width = self.mwidth - 20
+        show_dict, temp_dict = {}, {}
+        count = 1
+        print("which product do you prefer ?")
+        if len(data) % 2 != 0:
+            data.popitem()
+        for key in data.keys():
+            temp_dict[count] = key
+            show_dict[count] = str(count) + "- " + key
+            count += 1
+        d2 = dict(list(show_dict.items())[len(show_dict)//2:])
+        d1 = dict(list(show_dict.items())[:len(show_dict)//2])
+        for v,v1 in zip(d1.values(), d2.values()):
+            print(' {1:{0}} {2:<{0}}'.format(width,v,v1), end ='\n')
+        return temp_dict
+
+    def select_product(self, data):
+        products = self.product_list(data)
+        choice = int(input())
+        lst_len = int(len(products)) + 1
+        while choice not in range(1, lst_len):
+            choice = int(input())
+        else:
+            key = products[choice]
+            return data[key]

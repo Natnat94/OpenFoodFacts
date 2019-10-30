@@ -42,9 +42,8 @@ def main():
 
     if r_into_db:
         # selection d'un element de la base de données
-        userux.show_product(information.info())
-
-
+        choice = userux.select_product(information.get_products())
+        userux.show_product(information.get_info(choice))
 
 if __name__ == "__main__":
     main()
