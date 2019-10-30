@@ -1,6 +1,7 @@
 from api import ApiRetriever, Product, Store, StoreProduct, \
     DatabaseBuilder, DataCleaner, Information, UserUx
 import json
+from pprint import pprint
 
 def main():
     api = ApiRetriever()
@@ -20,6 +21,7 @@ def main():
     # debut du programme
     if use_api == 1:
         # utilisation de l'api et nettoyage des données
+        print("utilisation de l'api")
         cleaner.realcleaner(raw_data)
 
     if w_into_file == 1:
@@ -32,6 +34,7 @@ def main():
         # creation des tables
         dbbuilder.create_tables()
         # Boucle de remplissage de la base de données
+        print("utilisation de la base de données")
         for prdt in cleaner.data_save:
             stores.insert_store(prdt)
             products.insert_product(prdt, category)
@@ -42,8 +45,12 @@ def main():
 
     if r_into_db == 1:
         # selection d'un element de la base de données
-        choice = userux.select_product(information.get_products())
-        userux.show_product(information.get_info(choice))
+        cat_list = information.get_category()
+        category = userux.select_category(cat_list) # selection de la categorie désirée
+        choice = userux.select_product(information.get_products(category)) #selection du produit désiré a partir d'une liste
+        userux.show_product(information.get_info(choice)) #récuperation et affichage du produit choisie
+
+
 
 if __name__ == "__main__":
     main()

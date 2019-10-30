@@ -25,7 +25,7 @@ class ApiRetriever:
                          'json': '1',
                          'tagtype_0': 'categories',
                          'tag_contains_0': 'contains',
-                         'tag_0': 'Biscuits',
+                         'tag_0': 'Conserves',
                          'page_size': '250'}
 
     def get_data(self):
@@ -256,7 +256,7 @@ class DataCleaner:
 
 
 class Information(DatabaseHandler):
-    """docstring for information."""
+    """docstring for Information."""
 
     def get_info(self, data):
         """this method retreive the info about the selected product"""
@@ -283,21 +283,29 @@ class Information(DatabaseHandler):
         produit['store'] = store
         return produit
 
-    def get_products(self):
+    def get_products(self, data):
         """this method retreive the products list of a selected category"""
         req_product = self.db.query(
                 'SELECT product.productname, product.productid \
-                from product, category where \
-                (category.category = :cat and product.nutriscore > :nutri) \
-                LIMIT 20', cat = 'Conserves', nutri = 'b')
+                from product where \
+                (product.category = :cat and product.nutriscore > :nutri) \
+                LIMIT 20', cat = data, nutri = 'b')
         req_products = {}
         for r in req_product:
             req_products[r.productname] = r.productid
-        return req_products
+        return req_products # recherche les produits existants d'une categorie dans la BdD
+
+    def get_category(self):
+        """this method retreive the category list of the database"""
+        req_category = self.db.query('SELECT * from category')
+        req_categories = {}
+        for r in req_category:
+            req_categories[r.category] = r.id
+        return req_categories # recherche les categories existantes dans la BdD
 
 
 class UserUx:
-
+    """docstring for UserUx."""
     def __init__(self):
         self.width = os.get_terminal_size().columns
         if self.width % 2 != 0:
@@ -311,11 +319,11 @@ class UserUx:
         self.one_cell(data['link'])
         self.two_cell('Produit disponible dans les magasins', 'Score nutritif')
         self.two_cell(data['store'], data['nutriscore'])
-        self.ligne()
+        self.ligne() # affiche une fiche d'un produit dans le terminal
 
     def ligne(self):
 
-        print('{0:*^{1}}'.format('*', self.width),end ='\n')
+        print('{0:*^{1}}'.format('*', self.width),end ='\n') # dessine une ligne dans le terminal
 
     def two_cell(self, titre1, titre2):
         width = self.mwidth - 3
@@ -323,7 +331,7 @@ class UserUx:
         self.ligne()
         print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
         print('* {0:^{2}}* {1:^{3}}*'.format(titre1, titre2, width, width2), end ='\n')
-        print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n')
+        print('* {0:<{1}}* {0:<{2}}*'.format('', width, width2), end ='\n') # dessine deux cellules d'info dans le terminal
 
     def one_cell(self,link):
         width = self.width - 3
@@ -333,9 +341,10 @@ class UserUx:
             print("ouaaaaaiiii")
         else:
             print('* {0:^{1}}*'.format(link, width), end ='\n')
-        print('* {0:^{1}}*'.format('', width), end ='\n')
+        print('* {0:^{1}}*'.format('', width), end ='\n') # dessine une cellule d'info dans le terminal
 
     def product_list(self, data):
+        os.system('cls' if os.name == 'nt' else 'clear')
         show_dict, temp_dict = {}, {}
         count = 1
         print("which product do you prefer ?")
@@ -348,7 +357,7 @@ class UserUx:
             if count % 2 == 0:
                 print("")
             count += 1
-        return temp_dict
+        return temp_dict # affiche une liste des produits dans le terminal
 
     def select_product(self, data):
         products = self.product_list(data)
@@ -358,4 +367,15 @@ class UserUx:
             choice = int(input())
         else:
             key = products[choice]
-            return data[key]
+            return data[key] # selectionne un produit dans le terminal
+
+    def select_category(self, data):
+
+        products = self.product_list(data)
+        choice = int(input())
+        lst_len = int(len(products)) + 1
+        while choice not in range(1, lst_len):
+            choice = int(input())
+        else:
+            key = products[choice]
+            return data[key] # selectionne une categorie dans le terminal
