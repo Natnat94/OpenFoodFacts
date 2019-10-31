@@ -1,5 +1,6 @@
-from api import ApiRetriever, Product, Store, StoreProduct, \
-    DatabaseBuilder, DataCleaner, Information, UserUx, Substitute, SaveProduct
+from bin.api import *
+from bin.database import *
+from bin.interface import *
 import json
 import tablib
 from pprint import pprint
@@ -12,6 +13,7 @@ def main():
     stores = Store()
     userux = UserUx()
     save = SaveProduct()
+    drawer = Drawer()
     information = Information()
     products = Product()
     storeproduct = StoreProduct()
@@ -64,6 +66,8 @@ def main():
 
         # sauvegarde le produit et son substitue dans la base de donnée
         save.save(choice, sub_choice)
-        
+    userux.screen_size(save.read())
+    drawer.line()
+
 if __name__ == "__main__":
     main()
