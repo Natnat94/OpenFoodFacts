@@ -1,5 +1,5 @@
 from api import ApiRetriever, Product, Store, StoreProduct, \
-    DatabaseBuilder, DataCleaner, Information, UserUx, Substitute
+    DatabaseBuilder, DataCleaner, Information, UserUx, Substitute, SaveProduct
 import json
 import tablib
 from pprint import pprint
@@ -11,6 +11,7 @@ def main():
     substitute = Substitute()
     stores = Store()
     userux = UserUx()
+    save = SaveProduct()
     information = Information()
     products = Product()
     storeproduct = StoreProduct()
@@ -54,14 +55,15 @@ def main():
         category = userux.select_category(cat_list) # selection de la categorie désirée
         choice = userux.select_product(information.get_products(category)) #selection du produit désiré a partir d'une liste
         userux.show_product(information.get_info(choice)) #récuperation et affichage du produit choisie
-
-    if True:
+    choix = int(input("choisir un substitue ? 1-oui 0-non "))
+    if choix == 1:
         # selection d'un produit substitue dans la base de données
-        sub = substitute.search_sub(4001724017578)
-        choice = userux.select_product(sub)
-        userux.show_product(information.get_info(choice))
+        sub = substitute.search_sub(choice)
+        sub_choice = userux.select_product(sub)
+        userux.show_product(information.get_info(sub_choice))
 
-    # sauvegarde le produit et son substitue dans la base de donnée
-    
+        # sauvegarde le produit et son substitue dans la base de donnée
+        save.save(choice, sub_choice)
+        
 if __name__ == "__main__":
     main()

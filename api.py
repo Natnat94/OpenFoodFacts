@@ -414,7 +414,14 @@ class SaveProduct(DatabaseHandler):
                            product = product, substitute = substitute)
 
     def read(self):
-        pass
+        product = self.db.query('SELECT productsaved.id, product.productname from product, productsaved where (productsaved.productid = product.productid)')
+        sub_product = self.db.query('SELECT productsaved.id, product.productname from product, productsaved where (productsaved.subproductid = product.productid)')
+        temp_product = {}
+        for r in product:
+            temp_product[r.id] = r.productname
+            # list[r.productname] = sub_product[r].productname
+            print(temp_product)
+            # list[r] =  = r.productid
 
     def remove(self, id):
         pass
