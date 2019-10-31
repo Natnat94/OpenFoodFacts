@@ -17,7 +17,7 @@ def main():
     information = Information()
     products = Product()
     storeproduct = StoreProduct()
-    categories = ["Aliments pour bébé", "Biscuits", "Pizzas", "Conserves"]
+    categories = ["Fromage", "Biscuits", "Pizzas", "Conserves"]
     use_api = int(input("use the api ? 1-yes 0-no "))
     w_into_db = int(input("write into the DB ? 1-yes 0-no "))
     w_into_file = int(input("write into the JSON file ? 1-yes 0-no "))

@@ -91,7 +91,8 @@ class DataCleaner:
                     erreur = True
                     self.erreur_count['prob1'] += 1
                 else:
-                    self.data2[key] = html.unescape(product[key])
+                    value = product[key].replace('\n',' ')
+                    self.data2[key] = html.unescape(value)
             else:
                 self.erreur_count['prob2'] += 1
                 erreur = True

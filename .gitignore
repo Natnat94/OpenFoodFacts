@@ -3,3 +3,4 @@ note.txt
 sqlscript.sql
 rien.py
 products.json
+__pycache__
