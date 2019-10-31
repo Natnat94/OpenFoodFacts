@@ -25,12 +25,13 @@ class ApiRetriever:
                          'json': '1',
                          'tagtype_0': 'categories',
                          'tag_contains_0': 'contains',
-                         'tag_0': 'Conserves',
+                         'tag_0': '',
                          'page_size': '250'}
 
-    def get_data(self):
+    def get_data(self, category):
         """this method send a request to get the data
             researched from the API in JSON"""
+        self.research['tag_0'] = category
         content = requests.get(self.url, params=self.research)
         self.data = content.json()
         return self.data
@@ -168,7 +169,7 @@ class DatabaseBuilder:
         DATABASE_URL = ("mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4".format(user, password))
         self.db = records.Database(DATABASE_URL)
 
-    def create_tables(self):
+    def create_tables(self, category):
         """this method create the tables needed for the Database
             if they don't already exists"""
         self.db.query(table.store)
@@ -176,16 +177,13 @@ class DatabaseBuilder:
         self.db.query(table.product)
         self.db.query(table.storeproduct)
         self.db.query(table.productsaved)
-        self.init_category()
+        self.init_category(category)
 
-    def init_category(self):
+    def init_category(self, data):
         """this method insert the data for the 'category' table if
             it is not already exists"""
-        self.db.bulk_query("""INSERT IGNORE INTO category(Category) VALUES (:data1)""",
-                           {"data1": "Aliments pour bébé"},
-                           {"data1": "Biscuits"},
-                           {"data1": "Pizzas"},
-                           {"data1": "Conserves"}) # READY DO NOT TOUCH !!
+        self.db.query('INSERT IGNORE INTO category(Category) VALUES (:data)',
+                           data = data) # READY DO NOT TOUCH !!
 
 
 class DataCleaner:
