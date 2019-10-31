@@ -388,3 +388,33 @@ class UserUx(Drawer):
         welcome =["","","","","","Bienvenue !!!","","","","",""]
         Drawer.one_cell(welcome)
         Drawer.line()
+
+
+class Substitute(DatabaseHandler):
+
+    def search_sub(self, data):
+
+        research = self.db.query('SELECT productname, productid FROM product \
+                        where category = (select category from product \
+                        where productid = :id) and nutriscore < \
+                        (select nutriscore from product \
+                        where productid = :id) \
+                        limit 10', id = data)
+        req_products = {}
+        for r in research:
+            req_products[r.productname] = r.productid
+        return req_products
+
+class SaveProduct(DatabaseHandler):
+
+    def save(self, product, substitute):
+        self.db.query('INSERT IGNORE INTO productsaved \
+                    (productid, subproductid) \
+                    VALUES (:product, :substitute)',
+                           product = product, substitute = substitute)
+
+    def read(self):
+        pass
+
+    def remove(self, id):
+        pass
