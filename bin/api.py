@@ -2,13 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import requests
-import records
 import html
-import os
-import json
-from sqlalchemy.exc import IntegrityError
-import sqlscript as table
-from pprint import pprint
+
 
 class ApiRetriever:
     """this class purpose is to retrieve the information from
@@ -42,6 +37,7 @@ class ApiRetriever:
                 'url',
                 'product_name_fr',
                 'stores',
+                'ingredients_text',
                 'nutrition_grade_fr',
                 'id']
         for c in self.data["products"]:
@@ -49,6 +45,7 @@ class ApiRetriever:
             print("---------------------------------------------")
             for key in cles:
                 print("{} ----> {}".format(key, sdata[key]))
+
 
 class DataCleaner:
     """this class purpose is to clean the raw data received from the API"""
@@ -80,6 +77,7 @@ class DataCleaner:
                 'url',
                 'product_name_fr',
                 'stores',
+                'ingredients_text',
                 'nutrition_grade_fr',
                 'id']
         erreur = False
@@ -91,7 +89,8 @@ class DataCleaner:
                     erreur = True
                     self.erreur_count['prob1'] += 1
                 else:
-                    value = product[key].replace('\n',' ')
+                    value = product[key].replace('\n', ' ')
+                    value = value.replace("_", "")
                     self.data2[key] = html.unescape(value)
             else:
                 self.erreur_count['prob2'] += 1
@@ -115,4 +114,4 @@ class DataCleaner:
         except UnicodeDecodeError:
             return False
         else:
-            return True # READY DO NOT TOUCH !!
+            return True  # READY DO NOT TOUCH !!

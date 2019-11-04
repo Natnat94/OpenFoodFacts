@@ -51,3 +51,10 @@ CREATE TABLE IF NOT EXISTS productsaved (
       REFERENCES product(productid)
 )
 ENGINE=INNODB;"""
+
+config = """
+CREATE TABLE IF NOT EXISTS config (
+    name VARCHAR(30) NOT NULL UNIQUE,
+    state SMALLINT NOT NULL
+)
+ENGINE=INNODB;"""

@@ -1,6 +1,7 @@
 from bin.api import *
 from bin.database import *
 from bin.interface import *
+import time
 import json
 import tablib
 from pprint import pprint
@@ -29,7 +30,7 @@ def main():
 
         if use_api == 1: # READY DO NOT TOUCH !!
             # utilisation de l'api et nettoyage des données
-            print("utilisation de l'api pour {}".format(category))
+            print("Chargement des informations pour la categorie {}".format(category))
             raw_data = api.get_data(category)
             cleaner.realcleaner(raw_data)
 
@@ -42,7 +43,6 @@ def main():
             # creation des tables
             dbbuilder.create_tables(category)
             # Boucle de remplissage de la base de données
-            print("utilisation de la base de données")
             for prdt in cleaner.data_save:
                 stores.insert_store(prdt)
                 products.insert_product(prdt, category)
@@ -63,11 +63,15 @@ def main():
         sub = substitute.search_sub(choice)
         sub_choice = userux.select_product(sub)
         userux.show_product(information.get_info(sub_choice))
-
-        # sauvegarde le produit et son substitue dans la base de donnée
-        save.save(choice, sub_choice)
-    userux.screen_size(save.read())
-    drawer.line()
+        time.sleep(2)
+        save_p = int(input("sauvegarder le produit ?"))
+        if save_p == 1:
+            # sauvegarde le produit et son substitue dans la base de donnée
+            save.save(choice, sub_choice)
+            userux.screen_size(save.read())
+            drawer.line()
+        else:
+            pass
 
 if __name__ == "__main__":
     main()
