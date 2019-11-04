@@ -8,7 +8,7 @@ import sqlscript as table
 
 
 class DatabaseBuilder:
-    """this class purpose is the create the database tables if they
+    """this class purpose is to create the database's tables if they
         do not already exist"""
 
     def __init__(self):
@@ -17,7 +17,7 @@ class DatabaseBuilder:
         DATABASE_URL = ("mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4".format(user, password))
         self.db = records.Database(DATABASE_URL)
 
-    def create_tables(self, category):
+    def create_tables(self):
         """this method create the tables needed for the Database
             if they don't already exists"""
         self.db.query(table.store)
@@ -26,13 +26,12 @@ class DatabaseBuilder:
         self.db.query(table.storeproduct)
         self.db.query(table.productsaved)
         self.db.query(table.config)
-        self.init_category(category)
 
     def init_category(self, data):
         """this method insert the data for the 'category' table if
             it is not already exists"""
         self.db.query('INSERT IGNORE INTO category(Category) VALUES (:data)',
-                      data=data)  # READY DO NOT TOUCH !!
+                      data=data)
 
 
 class DatabaseHandler:
@@ -52,7 +51,17 @@ class DatabaseHandler:
         try:
             self.db.query("""INSERT INTO config values('exist', 0)""")
         except IntegrityError:
-            pass  # READY DO NOT TOUCH !!
+            pass
+
+    def status_db(self):
+        """this method read the config table and return
+        the 'state' row value"""
+        state = self.db.query("""SELECT * FROM config""")
+        return state[0].state
+
+    def update_status_db(self):
+        """this method update the 'state' value from the config table"""
+        self.db.query("""UPDATE config SET state = 1 WHERE name = 'exist'""")
 
 
 class Product(DatabaseHandler):
@@ -62,30 +71,24 @@ class Product(DatabaseHandler):
         """this method insert the productid, productname, link, nutriscore
             & category of a given product into the 'product' table"""
         try:
-            self.db.query('INSERT INTO product (productid, productname, link, nutriscore, description, category) VALUES(:a, :b, :c, :d, :f, :g)',
+            self.db.query('INSERT INTO product (productid, productname, link, \
+                          nutriscore, description, category) \
+                          VALUES(:a, :b, :c, :d, :f, :g)',
                           a=data['id'],
                           b=data['product_name_fr'],
                           c=data['url'],
                           d=data['nutrition_grade_fr'],
                           f=data['ingredients_text'],
                           g=self.category_id(catg))
-        except IntegrityError:  # as e:
-            # code = e.orig
-            # if self.count < 3:
-            #     print("pendant l'integration dans la table 'product': ")
-            #    print(code)
-            #    self.count = self.count + 1
-            # else:
-            #     pass
+        except IntegrityError:
             self.erreur_count['error'] += 1
 
     def category_id(self, data):
         """this method return the category id related to the category name
             given from the method argument"""
-        # retrouve l'id de la category rechercher sur la table 'category'
         truc = self.db.query('SELECT id FROM category WHERE category = :cat',
                              cat=data)
-        return truc[0].id  # READY DO NOT TOUCH !!
+        return truc[0].id
 
 
 class Store(DatabaseHandler):
@@ -93,32 +96,21 @@ class Store(DatabaseHandler):
 
     def insert_store(self, product):
         """this method insert the store's item into the 'store' table"""
-        # ajout les magasin dans la table 'store' si il n'existe pas deja a
-        # partir de la list de l'api
         self.store_list = self.storecleaner(product)
         for i in self.store_list:
             try:
                 self.db.query('INSERT INTO store (store) VALUES(:store)',
                               store=i)
-            except IntegrityError:  # as e:
-                # code = e.orig
-                # if self.count < 3:
-                #    print("pendant l'integration dans la table 'store': ")
-                #    print(code)
-                #    self.count = self.count + 1
-                # else:
-                #    pass
+            except IntegrityError:
                 self.erreur_count['error'] += 1
 
     def storecleaner(self, data):
         """clean the string of stores received into a list and return it"""
-        # doit parcourir la liste des magasin et eliminer les magasins qui
-        # ne sont pas ecrit en latin
         store = data['stores']
         store_list = store.split(",")
         for c in range(len(store_list)):
             store_list[c] = store_list[c].strip()
-        return store_list  # READY DO NOT TOUCH !!
+        return store_list
 
 
 class StoreProduct(DatabaseHandler):
@@ -128,31 +120,24 @@ class StoreProduct(DatabaseHandler):
         """this method insert the store id related to a product (id), receive
             the "product id" and the "store name" as argument into
             the 'storeproduct' table"""
-        # doit inserer l'id du magasin lier au produit
         store_id = self.check_id(store)
         try:
-            self.db.query('INSERT INTO storeproduct (productid, store) VALUES(:productid, :store)',
+            self.db.query('INSERT INTO storeproduct (productid, store) \
+                          VALUES(:productid, :store)',
                           productid=data['id'], store=store_id)
-        except IntegrityError:  # as e:
-            # code = e.orig
-            # if self.count < 3:
-            #     print("pendant l'integration dans la table 'storeproduct': ")
-            #     print(code)
-            #     self.count = self.count + 1
-            # else:
-            #     pass
+        except IntegrityError:
             self.erreur_count['error'] += 1
 
     def check_id(self, data):
         """this method return the store id related to the store name
             given from the method argument"""
-        # retrouve l'id du magasin rechercher sur la table 'store'
-        truc = self.db.query('SELECT id FROM store WHERE Store = :stores', stores=data)
-        return truc[0].id  # READY DO NOT TOUCH !!
+        truc = self.db.query('SELECT id FROM store WHERE Store = :stores',
+                             stores=data)
+        return truc[0].id
 
 
 class Information(DatabaseHandler):
-    """docstring for Information."""
+    """this class purpose is to retreive infomations from the database"""
 
     def get_info(self, data):
         """this method retreive the info about the selected product"""
@@ -176,7 +161,7 @@ class Information(DatabaseHandler):
         store = list(dict.fromkeys(store))
         store = " & ".join(store)
         produit['store'] = store
-        return produit  # recheche les info sur le produit selectionné
+        return produit
 
     def get_products(self, data):
         """this method retreive the products list of a selected category"""
@@ -188,9 +173,9 @@ class Information(DatabaseHandler):
         req_products = {}
         for r in req_product:
             req_products[r.productname] = r.productid
-        return req_products  # recherche les produits existants d'une categorie dans la BdD
+        return req_products
 
-    def get_category(self):  # recherche les categories existantes dans la BdD
+    def get_category(self):
         """this method retreive the category list of the database"""
         req_category = self.db.query('SELECT * from category')
         req_categories = {}
@@ -200,9 +185,11 @@ class Information(DatabaseHandler):
 
 
 class Substitute(DatabaseHandler):
+    """this class purpose is to look for a substitue product in the DB"""
 
     def search_sub(self, data):
-
+        """this method search for a related substitute according
+        to product id provided and return a list of products"""
         research = self.db.query('SELECT productname, productid FROM product \
                         where category = (select category from product \
                         where productid = :id) and nutriscore < \
@@ -212,27 +199,36 @@ class Substitute(DatabaseHandler):
         req_products = {}
         for r in research:
             req_products[r.productname] = r.productid
-        return req_products  # READY DO NOT TOUCH !!
+        return req_products
 
 
 class SaveProduct(DatabaseHandler):
+    """this class purpose is to use the 'productsaved' table"""
 
     def save(self, product, substitute):
+        """this method save the original product and it's substitute into
+        the database"""
         self.db.query('INSERT IGNORE INTO productsaved \
                       (productid, subproductid) \
                       VALUES (:product, :substitute)',
                       product=product, substitute=substitute)
 
     def read(self):
-        product = self.db.query('SELECT productsaved.id, product.productname from product, productsaved where (productsaved.productid = product.productid)')
-        sub_product = self.db.query('SELECT productsaved.id, product.productname from product, productsaved where (productsaved.subproductid = product.productid)')
+        """this method read the original products and their substitutes
+        saved into the database"""
+        product = self.db.query('SELECT productsaved.id, product.productname \
+                                from product, productsaved where \
+                                (productsaved.productid = product.productid)')
+        sub_product = self.db.query('SELECT productsaved.id, product.productname \
+                                    from product, productsaved where \
+                                    (productsaved.subproductid = \
+                                    product.productid)')
         temp_product, temp_sub = {}, {}
         text = ["Voici vos produits sauvegardés:", ""]
         for r in product:
             temp_product[r.id] = r.productname
         for r in sub_product:
             temp_sub[r.id] = r.productname
-        # print("Voici vos produits sauvegardés:\n")
         for key, value in sorted(temp_product.items()):
             text.append(str(key) + " - " + value + " ----> " + temp_sub[key])
         return text
