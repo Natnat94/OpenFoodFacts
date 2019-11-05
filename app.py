@@ -1,7 +1,7 @@
-from bin.api import ApiRetriever, DataCleaner
-from bin.database import DatabaseBuilder, Information, Product, StoreProduct, \
+from module.api import ApiRetriever, DataCleaner
+from module.database import DatabaseBuilder, Information, Product, StoreProduct, \
                          SaveProduct, Store, Substitute, DatabaseHandler
-from bin.interface import UserUx, Drawer
+from module.interface import UserUx, Drawer
 import time
 
 
