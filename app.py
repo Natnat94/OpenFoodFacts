@@ -10,7 +10,7 @@ class Application:
 
     def run(self):
         """run the application"""
-        categories = ["Fromage", "Biscuits", "Pizzas", "Conserves"]
+        categories = ["Fromages de France", "Gaufrettes", "Pizzas surgelées", "Chips", "Gratins", "Chocolats"]
         userux = UserUx()
         userux.welcome()
         dbbuilder = DatabaseBuilder()

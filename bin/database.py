@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import records
 import os
+import random
+import records
 from sqlalchemy.exc import IntegrityError
 import sqlscript as table
 
@@ -164,15 +165,18 @@ class Information(DatabaseHandler):
         return produit
 
     def get_products(self, data):
-        """this method retreive the products list of a selected category"""
+        """this method retreive a random list of 15 products
+        from a selected category"""
         req_product = self.db.query(
                 'SELECT product.productname, product.productid \
                 from product where \
                 (product.category = :cat and product.nutriscore > :nutri) \
-                LIMIT 20', cat=data, nutri='b')
+                LIMIT 150', cat=data, nutri='b')
         req_products = {}
         for r in req_product:
             req_products[r.productname] = r.productid
+        req_products = random.sample(list(req_products.items()), k=15)
+        req_products = dict(req_products)
         return req_products
 
     def get_category(self):
@@ -195,10 +199,12 @@ class Substitute(DatabaseHandler):
                         where productid = :id) and nutriscore < \
                         (select nutriscore from product \
                         where productid = :id) \
-                        limit 10', id=data)
+                        limit 50', id=data)
         req_products = {}
         for r in research:
             req_products[r.productname] = r.productid
+        req_products = random.sample(list(req_products.items()), k=10)
+        req_products = dict(req_products)
         return req_products
 
 
