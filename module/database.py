@@ -203,8 +203,11 @@ class Substitute(DatabaseHandler):
         req_products = {}
         for r in research:
             req_products[r.productname] = r.productid
-        req_products = random.sample(list(req_products.items()), k=10)
-        req_products = dict(req_products)
+        try:
+            req_products = random.sample(list(req_products.items()), k=15)
+            req_products = dict(req_products)
+        except Exception:
+            pass
         return req_products
 
 

@@ -16,7 +16,7 @@ class Drawer:
         self.lines = os.get_terminal_size().lines // 2
 
     def line(self):
-        """this method dra a line of *"""
+        """this method draw a line of *"""
         print('{0:*^{1}}'.format('*', self.width), end='\n')
 
     def two_cell(self, titre1, titre2):
@@ -131,7 +131,7 @@ class UserUx(Drawer):
         cleaned_data = data.split(", ")
         return cleaned_data
 
-    def input_validator(self, text, number = 3):
+    def input_validator(self, text, number=3):
         """this method check if the input from the user is valid"""
         try:
             print(text, end=" ")

@@ -1,8 +1,7 @@
 from module.api import ApiRetriever, DataCleaner
-from module.database import DatabaseBuilder, Information, Product, StoreProduct, \
-                         SaveProduct, Store, Substitute, DatabaseHandler
+from module.database import DatabaseBuilder, Information, Store, StoreProduct,\
+                         SaveProduct, Product,  Substitute, DatabaseHandler
 from module.interface import UserUx, Drawer
-import time
 
 
 class Application:
@@ -10,7 +9,12 @@ class Application:
 
     def run(self):
         """run the application"""
-        categories = ["Fromages de France", "Gaufrettes", "Pizzas surgelées", "Chips", "Gratins", "Chocolats"]
+        categories = ["Boissons gazeuses",
+                      "Biscuits secs",
+                      "Quiches",
+                      "Chips",
+                      "Gratins",
+                      "Yaourts à la framboise"]
         userux = UserUx()
         userux.welcome()
         dbbuilder = DatabaseBuilder()
@@ -19,8 +23,7 @@ class Application:
         exist = dh.status_db()
         if exist == 0:
             for category in categories:
-                print("Chargement des informations pour la categorie \
-                      {}".format(category))
+                print(f"Chargement des informations pour {category}")
                 api = ApiRetriever()
                 raw_data = api.get_data(category)
                 cleaner = DataCleaner()
@@ -35,29 +38,50 @@ class Application:
                         storeproduct = StoreProduct()
                         storeproduct.insert_storeproduct(prdt, store)
             dh.update_status_db()
-        information = Information()
-        cat_list = information.get_category()
-        category = userux.select_category(cat_list)
-        choice = userux.select_product(information.get_products(category))
-        userux.show_product(information.get_info(choice))
-        text = "Choisir un substitue ? 1-oui 2-non "
-        substitue = userux.input_validator(text)
-        if substitue == 1:
-            substitute = Substitute()
-            sub = substitute.search_sub(choice)
-            sub_choice = userux.select_product(sub)
-            userux.show_product(information.get_info(sub_choice))
-            text = "Sauvegarder le produit ?  1-oui 2-non "
-            save_p = userux.input_validator(text)
-            if save_p == 1:
-                save = SaveProduct()
-                save.save(choice, sub_choice)
-                userux.screen_size(save.read())
-                drawer = Drawer()
-                drawer.line()
+        text = "Souhaitez vous chercher un produit ? (1) \
+               ou voir vos sauvegardes (2) "
+        choice = userux.input_validator(text)
+        if choice == 1:
+            information = Information()
+            cat_list = information.get_category()
+            category = userux.select_category(cat_list)
+            product = userux.select_product(information.get_products(category))
+            userux.show_product(information.get_info(product))
+            text = "Choisir un substitue ? oui(1) ou non(2) "
+            choice = userux.input_validator(text)
+            if choice == 1:
+                sub = Substitute()
+                sub = sub.search_sub(product)
+                sub_choice = userux.select_product(sub)
+                userux.show_product(information.get_info(sub_choice))
+                text = "Sauvegarder le produit ?  oui(1) ou non(2) "
+                choice = userux.input_validator(text)
+                if choice == 1:
+                    save = SaveProduct()
+                    save.save(product, sub_choice)
+                    userux.screen_size(save.read())
+                    drawer = Drawer()
+                    drawer.line()
+                    text = "Chercher un nouveau produit ?  oui(1) ou non(2) "
+                    choice = userux.input_validator(text)
+                    if choice == 1:
+                        main()
             else:
-                pass
+                text = "Chercher un nouveau produit ?  oui(1) ou non(2) "
+                choice = userux.input_validator(text)
+                if choice == 1:
+                    main()
+        elif choice == 2:
+            save = SaveProduct()
+            userux.screen_size(save.read())
+            drawer = Drawer()
+            drawer.line()
+            text = "Chercher un nouveau produit ?  oui(1) ou non(2) "
+            choice = userux.input_validator(text)
+            if choice == 1:
+                main()
         userux.goodbye()
+
 
 def main():
     app = Application()

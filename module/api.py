@@ -61,9 +61,9 @@ class DataCleaner:
     def realcleaner(self, data):
         """This method role is to clean the data received from
             any useless information"""
-        for c in range(50):  # self.data["products"]:
-            i = data["products"][c]
-            if self.isvalid(i):
+        for c in data["products"]:
+            # i = data["products"][c]
+            if self.isvalid(c):
                 continue
             else:
                 self.data_save.append(self.data2.copy())
@@ -97,16 +97,6 @@ class DataCleaner:
                 erreur = True
         return erreur
 
-    def categoryfilter(self):
-        # doit parcourir la liste des categories d'un produit et retenir
-        # uniquement les categories pré selectionné
-        pass
-
-    def brandfilter(self):
-        # doit parcourir la liste des marques et retenir que la premiere
-        # marque (séparer par ",")
-        pass
-
     def isEnglish(self, s):
         """this method check if there is any non-latin word (not in use)"""
         try:
@@ -114,4 +104,4 @@ class DataCleaner:
         except UnicodeDecodeError:
             return False
         else:
-            return True  # READY DO NOT TOUCH !!
+            return True
