@@ -88,7 +88,7 @@ class UserUx(Drawer):
         os.system('cls' if os.name == 'nt' else 'clear')
         show_dict, temp_dict = {}, {}
         count = 1
-        liste = ["Quel est votre choix ?", ""]
+        liste = []
         for key in data.keys():
             temp_dict[count] = key
             show_dict[count] = str(count) + " - " + key
@@ -104,7 +104,8 @@ class UserUx(Drawer):
         of products displayed"""
         products = self.product_list(data)
         lst_len = int(len(products)) + 1
-        choice = self.input_validator(lst_len)
+        text = "Quel produit vous intéresse ?"
+        choice = self.input_validator(text, lst_len)
         key = products[choice]
         return data[key]
 
@@ -113,7 +114,8 @@ class UserUx(Drawer):
         of categories displayed"""
         products = self.product_list(data)
         lst_len = int(len(products)) + 1
-        choice = self.input_validator(lst_len)
+        text = "Quelle catégorie vous intéresse ?"
+        choice = self.input_validator(text, lst_len)
         key = products[choice]
         return data[key]
 
@@ -129,20 +131,27 @@ class UserUx(Drawer):
         cleaned_data = data.split(", ")
         return cleaned_data
 
-    def input_validator(self, number):
+    def input_validator(self, text, number = 3):
         """this method check if the input from the user is valid"""
         try:
-            print("text", end=" ")
+            print(text, end=" ")
             choice = int(input())
         except ValueError:
-            print("text", end=" ")
+            print(text, end=" ")
             choice = input()
         while choice not in range(1, number):
-            print("text", end=" ")
+            print(text, end=" ")
             try:
                 choice = int(input())
             except ValueError:
-                print("text", end=" ")
+                print(text, end=" ")
                 choice = input()
         else:
             return choice
+
+    def goodbye(Drawer):
+        """this method display a goodbye message"""
+        os.system('cls' if os.name == 'nt' else 'clear')
+        Drawer.screen_size("A bientôt !!!")
+        Drawer.line()
+        time.sleep(2)
