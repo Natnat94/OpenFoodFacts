@@ -62,7 +62,6 @@ class DataCleaner:
         """This method role is to clean the data received from
             any useless information"""
         for c in data["products"]:
-            # i = data["products"][c]
             if self.isvalid(c):
                 continue
             else:

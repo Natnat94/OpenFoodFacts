@@ -1,6 +1,8 @@
 from module.api import ApiRetriever, DataCleaner
-from module.database import DatabaseBuilder, Information, Store, StoreProduct,\
-                         SaveProduct, Product,  Substitute, DatabaseHandler
+from module.database import (
+    DatabaseBuilder, Information, Store, StoreProduct, SaveProduct, Product,
+    Substitute, DatabaseHandler
+)
 from module.interface import UserUx, Drawer
 
 

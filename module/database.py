@@ -15,7 +15,10 @@ class DatabaseBuilder:
     def __init__(self):
         user = os.environ.get('DATABASE_USER')
         password = os.environ.get('DATABASE_PASSWORD')
-        DATABASE_URL = ("mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4".format(user, password))
+        DATABASE_URL = (
+            "mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4"
+            .format(user, password)
+        )
         self.db = records.Database(DATABASE_URL)
 
     def create_tables(self):
@@ -43,7 +46,10 @@ class DatabaseHandler:
             and the MySQL database"""
         user = os.environ.get('DATABASE_USER')
         password = os.environ.get('DATABASE_PASSWORD')
-        DATABASE_URL = ("mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4".format(user, password))
+        DATABASE_URL = (
+            "mysql+mysqlconnector://{}:{}@localhost/projet5?charset=utf8mb4"
+            .format(user, password)
+        )
         self.db = records.Database(DATABASE_URL)
         self.erreur_count = {'error': 0}
         self.count = 0
