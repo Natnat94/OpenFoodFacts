@@ -1,34 +1,22 @@
-24/09/1019 debut du projet 5
+# Project 5
+> Utilisez les données publiques de l'OpenFoodFacts
 
 
-11/10/2019
+La startup Pur Beurre travaille connait bien les habitudes alimentaires françaises. Leur restaurant, Ratatouille, remporte un succès croissant et attire toujours plus de visiteurs sur la butte de Montmartre.
 
-  - l'api fonctionne
-  - il y a une fonction de nettoyage des infos recu par l'api
-  - les infos sont enregistré dans la base de donné que si il y a un lien
+L'équipe a remarqué que leurs utilisateurs voulaient bien changer leur alimentation mais ne savaient pas bien par quoi commencer. Remplacer le Nutella par une pâte aux noisettes, oui, mais laquelle ? Et dans quel magasin l'acheter ? Leur idée est donc de créer un programme qui interagirait avec la base Open Food Facts pour en récupérer les aliments, les comparer et proposer à l'utilisateur un substitut plus sain à l'aliment qui lui fait envie.
 
-  ---> probleme :
-     * des signes chinois apparaissent et ne sont pas lisible par la base de donné
-     * utf8md3 ne fonctionne pas
-     * je n'arrive pas a crée un user pour la database
-     * lorsque la fonction de filtre fonctione, elle n'efface pas toute la ligne mais insert la valeur de la ligne precedente
+## Installation
 
-  ---> a faire:
-     * choisir les données necessaire
-     * crée une fonction qui classe dans quelle table enregistrer les infos
-     * definir la structure de la base de données
+Téléchargez l'application à partir de Github puis utilisez dans votre environnement virtuel :
+```sh
+pipenv install
+```
+La base de données doit s'appeler **"projet5"** et l'id d'utilisateur doit être stocké dans la variable d'environnement **'DATABASE_USER'** et le mot de passe dans **'DATABASE_PASSWORD'**
 
-23/10/2019
+## Changelog:
 
-  - la base de donné se créé toute seule
-  - ajout des fonctions d'ajout de donnée au table: 'product', 'store', 'storeproduct'
-  - une fonction detecte l'id du magasin correspondant au produit
+### Version 1.0:
 
-
-  ---> a faire:
-    * gerer mes erreures lors de l'insertion de donné afin d'annuler toute la ligne si il y a eu un pb
-    * cree une fonction qui detecte les espaces dans les noms des magasin et qui les retire avant de les mettre dans la DB
-    * cree une fonction pour attribué la bonne categorie au produit
-
-  ---> probleme:
-    * une erreur "KeyError:" apparait de temps en temps lors du chargement des donnée de l'api
+   Houray ! Le programme est entièrement fonctionnel !  
+   On peut chercher un produit désiré parmi une liste de catégories, voir les informations le concernant, trouver un substitut et l’enregistré afin de le retrouver plus facilement la prochaine fois.
