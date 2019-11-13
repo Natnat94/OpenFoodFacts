@@ -4,3 +4,5 @@ sqlscript.sql
 rien.py
 products.json
 __pycache__
+*.pdf
+*.docx
