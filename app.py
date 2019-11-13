@@ -40,8 +40,8 @@ class Application:
                         storeproduct = StoreProduct()
                         storeproduct.insert_storeproduct(prdt, store)
             dh.update_status_db()
-        text = "Souhaitez vous chercher un produit ? (1) \
-               ou voir vos sauvegardes (2) "
+        text = "Souhaitez vous chercher un produit ? (1) "\
+               "ou voir vos sauvegardes (2) "
         choice = userux.input_validator(text)
         if choice == 1:
             information = Information()
@@ -61,7 +61,8 @@ class Application:
                 if choice == 1:
                     save = SaveProduct()
                     save.save(product, sub_choice)
-                    userux.screen_size(save.read())
+                    saved = save.read()
+                    userux.screen_size(saved[0])
                     drawer = Drawer()
                     drawer.line()
                     text = "Chercher un nouveau produit ?  oui(1) ou non(2) "
@@ -75,13 +76,29 @@ class Application:
                     main()
         elif choice == 2:
             save = SaveProduct()
-            userux.screen_size(save.read())
+            save, product, sub_prdt, length = save.read()
+            userux.screen_size(save)
             drawer = Drawer()
             drawer.line()
-            text = "Chercher un nouveau produit ?  oui(1) ou non(2) "
-            choice = userux.input_validator(text)
+            text = "Chercher un nouveau produit (1) ou " \
+                   "consulter un produit sauvegardé (2) " \
+                   "ou quitter le programme (3)"
+            choice = userux.input_validator(text, 4)
             if choice == 1:
                 main()
+            elif choice == 2:
+                text = "Quel produit souhaitez vous consulter ? "
+                pr_num = userux.input_validator(text, length + 1)
+                information = Information()
+                userux.show_product(information.get_info(product[pr_num]))
+                text = "voir le substitue ? oui (1) non (2) "
+                choice = userux.input_validator(text)
+                if choice == 1:
+                    userux.show_product(information.get_info(sub_prdt[pr_num]))
+                    text = "Chercher un nouveau produit ? oui(1) ou non(2)"
+                    choice = userux.input_validator(text)
+                    if choice == 1:
+                        main()
         userux.goodbye()
 
 

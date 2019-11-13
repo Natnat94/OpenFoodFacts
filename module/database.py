@@ -231,22 +231,26 @@ class SaveProduct(DatabaseHandler):
     def read(self):
         """this method read the original products and their substitutes
         saved into the database"""
-        product = self.db.query('SELECT productsaved.id, product.productname \
+        product = self.db.query('SELECT productsaved.id, product.productname,\
+                                productsaved.productid \
                                 from product, productsaved where \
                                 (productsaved.productid = product.productid)')
-        sub_product = self.db.query('SELECT productsaved.id, product.productname \
+        sub_product = self.db.query('SELECT productsaved.id, product.productname,\
+                                    productsaved.subproductid \
                                     from product, productsaved where \
                                     (productsaved.subproductid = \
                                     product.productid)')
-        temp_product, temp_sub = {}, {}
+        temp_product, temp_sub, product_id, sub_id = {}, {}, {}, {}
         text = ["Voici vos produits sauvegardés:", ""]
         for r in product:
             temp_product[r.id] = r.productname
+            product_id[r.id] = r.productid
         for r in sub_product:
             temp_sub[r.id] = r.productname
+            sub_id[r.id] = r.subproductid
         for key, value in sorted(temp_product.items()):
             text.append(str(key) + " - " + value + " ----> " + temp_sub[key])
-        return text
+        return text, product_id, sub_id, len(temp_product)
 
     def remove(self, id):
         pass
